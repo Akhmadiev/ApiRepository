@@ -1,104 +1,35 @@
 ﻿namespace MainApi
 {
-    using ApiAdditional;
-    using System;
+    using Quartz;
+    using Quartz.Impl;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
-    using System.Reflection;
-    using System.Threading.Tasks;
 
     public class MainApiClass
     {
-        private void Start()
+        public async void Start()
         {
-            var plugins = GetPlugins();
+            var scheduler = await StdSchedulerFactory.GetDefaultScheduler();
+            await scheduler.Start();
 
-            var countries = GetCountries(plugins);
+            var job = JobBuilder.Create<JobScheduler>().Build();
 
-            SaveData(countries);
+            var trigger = TriggerBuilder.Create()
+                .WithIdentity("trigger1", "group1")
+                .StartNow()
+                .WithSimpleSchedule(x => x.WithIntervalInMinutes(1).RepeatForever())
+                .Build();
+
+            await scheduler.ScheduleJob(job, trigger);
         }
 
-        private void SaveData(List<Country> countries)
+        public IQueryable<Country> GetAll()
         {
-            using (var context = new ApiContext())
-            {
-                var currentCountries = context.Countries.Select(x => x.Name);
-
-                countries = countries.Distinct().Where(x => !currentCountries.Contains(x.Name)).ToList();
-
-                foreach (var country in countries)
-                {
-                    context.Countries.Add(country);
-                }
-
-                context.SaveChanges();
-            }
-        }
-
-        private List<Country> GetCountries(List<IPlugin> plugins)
-        {
-            var logPath = $"{new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName}\\logs";
-
-            var objlockAdd = new object();
-            var objlockExc = new object();
-
             var countries = new List<Country>();
 
-            var result = Parallel.ForEach(plugins, x =>
-            {
-                try
-                {
-                    var task = x.Do<Country>();
-                    task.Wait();
+            var context = new ApiContext();
 
-                    lock (objlockAdd)
-                    {
-                        countries.AddRange(task.Result);
-                    }
-                }
-                catch (Exception e)
-                {
-                    lock(objlockExc)
-                    {
-                        var path = $"{logPath}\\api_error_{DateTime.Now.ToString("dd.MM.yyyy hh.mm.ss")}.txt";
-
-                        using (var sw = File.CreateText(path))
-                        {
-                            sw.WriteLine(e.StackTrace);
-                        }
-                    }
-                }
-            });
-
-            return countries;
-        }
-
-        private List<IPlugin> GetPlugins()
-        {
-            var files = Directory.GetFiles($"{new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName}\\dll");
-
-            var pluginType = typeof(IPlugin);
-
-            var plugins = new List<IPlugin>();
-
-            foreach (var file in files)
-            {
-                var assembly = Assembly.LoadFile(file);
-                var types = assembly.GetTypes();
-
-                foreach (var type in types.Where(x => !x.IsInterface && !x.IsAbstract))
-                {
-                    if (type.GetInterface(pluginType.FullName) != null)
-                    {
-                        var instance = (IPlugin)Activator.CreateInstance(type);
-
-                        plugins.Add(instance);
-                    }
-                }
-            }
-
-            return plugins;
+            return context.Countries;
         }
     }
 }

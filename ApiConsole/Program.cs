@@ -1,55 +1,40 @@
 ﻿namespace ApiConsole
 {
-    using ApiAdditional;
     using MainApi;
+    using Newtonsoft.Json;
     using System;
-    using System.Collections.Concurrent;
-    using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
-    using System.Reflection;
-    using System.Threading.Tasks;
+    using System.Threading;
 
     class Program
     {
         static void Main(string[] args)
         {
-            var plugins = GetPlugins();
-            var data = plugins[0].Do<Country>();
+            var main = new MainApiClass();
+            main.Start();
 
-            Start(plugins);
-
-            while (true) { }
-        }
-
-        private static void Start(List<IPlugin> plugins)
-        {
-            object objlock = new object();
-
-            var countries = new List<Country>(); 
-
-            var result = Parallel.ForEach(plugins, (IPlugin plug) =>
+            try
             {
-                try
+                while (true)
                 {
-                    var task = plug.Do<Country>();
-                    task.Wait();
+                    Console.WriteLine($"Start date: {DateTime.Now}");
 
-                    lock (objlock)
-                    {
-                        countries.AddRange(task.Result);
-                    }
-                }
-                catch(Exception e)
-                {
-                    var path = $"{Path.GetTempPath()}\\api_error_{DateTime.Now.ToString("dd.MM.yyyy hh.mm.ss")}.txt";
+                    var data = main.GetAll().ToList();
+                    var json = JsonConvert.SerializeObject(data);
+                    Console.WriteLine(json);
 
-                    using (var sw = File.CreateText(path))
-                    {
-                        sw.WriteLine(e.StackTrace);
-                    }
+                    Console.WriteLine();
+                    Console.WriteLine();
+
+                    Thread.Sleep(2000);
                 }
-            });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.StackTrace);
+                Console.WriteLine(e.Message);
+            }
+            
         }
     }
 }

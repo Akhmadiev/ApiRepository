@@ -75,6 +75,7 @@
     <Compile Include="Entities\Region.cs" />
     <Compile Include="Interfaces\IPlugin.cs" />
     <Compile Include="Interfaces\IService.cs" />
+    <Compile Include="JobScheduler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
