@@ -1,5 +1,8 @@
 ﻿namespace MainApi
 {
+    using MainApi.Enums;
+    using System;
+
     /// <summary>
     /// Country entity
     /// </summary>
@@ -14,5 +17,25 @@
         /// CapitalCity
         /// </summary>
         public string CapitalCity { get; set; }
+
+        /// <summary>
+        /// Continent
+        /// </summary>
+        public ContinentType ContinentType { get; set; }
+
+        /// <summary>
+        /// Start data
+        /// </summary>
+        public DateTime StartDate
+        {
+            get
+            {
+                return DateTime.Now;
+            }
+            set
+            {
+                StartDate = value;
+            }
+        }
     }
 }

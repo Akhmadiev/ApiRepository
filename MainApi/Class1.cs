@@ -4,6 +4,8 @@
     using Quartz.Impl;
     using System.Collections.Generic;
     using System.Linq;
+    using Castle.Windsor;
+    using System;
 
     public class MainApiClass
     {
@@ -23,6 +25,14 @@
             await scheduler.ScheduleJob(job, trigger);
         }
 
+        public static void RegisterService(IWindsorContainer container)
+        {
+            
+        }
+
+        /// <summary>
+        /// Get all countries
+        /// </summary>
         public IQueryable<Country> GetAll()
         {
             var countries = new List<Country>();
@@ -30,6 +40,19 @@
             var context = new ApiContext();
 
             return context.Countries;
+        }
+
+        /// <summary>
+        /// Get all countries by date
+        /// </summary>
+        public IQueryable<Country> GetAll(DateTime dateTime)
+        {
+            var countries = new List<Country>();
+
+            var context = new ApiContext();
+
+            return context.Countries
+                .Where(x => x.StartDate.Date == dateTime.Date);
         }
     }
 }
