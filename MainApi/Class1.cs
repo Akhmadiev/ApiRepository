@@ -11,6 +11,9 @@
     {
         public async void Start()
         {
+            var container = new WindsorContainer();
+            RegisterService(container);
+
             var scheduler = await StdSchedulerFactory.GetDefaultScheduler();
             await scheduler.Start();
 
