@@ -79,6 +79,7 @@
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="Entities\ApiContext.cs" />
+    <Compile Include="Interfaces\IGenerate.cs" />
     <Compile Include="Interfaces\ILogger.cs" />
     <Compile Include="Interfaces\IPlugin.cs" />
     <Compile Include="Interfaces\IRepository.cs" />
