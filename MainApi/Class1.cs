@@ -10,6 +10,7 @@
     using System.IO;
     using System.Reflection;
     using Castle.MicroKernel.Registration;
+    using MainApi.Interfaces;
 
     public class MainApiClass
     {
@@ -19,10 +20,14 @@
             RegisterPlugins(container);
 
             var scheduler = await StdSchedulerFactory.GetDefaultScheduler();
+
             await scheduler.Start();
 
             var job = JobBuilder.Create<JobScheduler>().Build();
-            job.JobDataMap.Add("Container", container);
+
+            job.JobDataMap.Add("Plugins", container.ResolveAll<IPlugin>());
+            job.JobDataMap.Add("Repository", container.Resolve<IRepository>("Repository"));
+            job.JobDataMap.Add("Logger", container.Resolve<ILogger>("Logger"));
 
             var trigger = TriggerBuilder.Create()
                 .WithIdentity("trigger1", "group1")
@@ -52,11 +57,12 @@
                     if (type.GetInterface(pluginType.FullName) != null)
                     {
                         var instance = (IPlugin)Activator.CreateInstance(type);
-
-                        container.Register(Component.For<IPlugin>().ImplementedBy(instance.GetType()).Named(instance.Name));
+                        container.Register(Component.For<IPlugin>().Instance(instance));
                     }
                 }
             }
+
+            container.Register(Component.For<IRepository>().ImplementedBy<Repository>());
         }
 
         /// <summary>

@@ -1,5 +1,6 @@
 ﻿namespace ApiConsole
 {
+    using ApiAdditional;
     using MainApi;
     using Newtonsoft.Json;
     using System;
