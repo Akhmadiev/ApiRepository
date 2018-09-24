@@ -40,7 +40,7 @@
 
             countries = countries.Distinct().Where(x => !currentCountries.Contains(x.Name)).ToList();
 
-            Repository.Save(countries);
+            Repository.Save<Country>(countries);
         }
 
         /// <summary>
