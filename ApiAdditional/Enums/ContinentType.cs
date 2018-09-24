@@ -1,7 +1,9 @@
-﻿namespace MainApi.Enums
+﻿namespace ApiAdditional
 {
     public enum ContinentType
     {
+        None = 0,
+
         Eurasia = 10,
 
         Africa = 20,

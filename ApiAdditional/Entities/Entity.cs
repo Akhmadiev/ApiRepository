@@ -1,4 +1,4 @@
-﻿namespace MainApi
+﻿namespace ApiAdditional
 {
     /// <summary>
     /// Base class for entities

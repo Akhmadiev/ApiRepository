@@ -1,5 +1,6 @@
 ﻿namespace MainApi
 {
+    using ApiAdditional;
     using System.Data.Entity;
 
     public class ApiContext : DbContext

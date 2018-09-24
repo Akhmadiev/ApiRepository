@@ -1,4 +1,4 @@
-﻿namespace Api2
+﻿namespace Api3
 {
     /// <summary>
     /// Country's dto
@@ -8,12 +8,12 @@
         /// <summary>
         /// Name
         /// </summary>
-        public string Name { get; set; }
+        public string CountryName { get; set; }
 
         /// <summary>
         /// CapitalCity
         /// </summary>
-        public string CapitalCity { get; set; }
+        public string CapitalName { get; set; }
 
         /// <summary>
         /// ContinentType

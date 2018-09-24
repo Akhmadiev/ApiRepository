@@ -16,6 +16,6 @@
         /// <summary>
         /// Method
         /// </summary>
-        Task<List<T>> Do<T>() where T : class;
+        Task<List<Country>> Do();
     }
 }

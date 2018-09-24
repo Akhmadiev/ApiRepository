@@ -6,18 +6,23 @@
     using System.Linq;
     using Castle.Windsor;
     using System;
+    using ApiAdditional;
+    using System.IO;
+    using System.Reflection;
+    using Castle.MicroKernel.Registration;
 
     public class MainApiClass
     {
         public async void Start()
         {
             var container = new WindsorContainer();
-            RegisterService(container);
+            RegisterPlugins(container);
 
             var scheduler = await StdSchedulerFactory.GetDefaultScheduler();
             await scheduler.Start();
 
             var job = JobBuilder.Create<JobScheduler>().Build();
+            job.JobDataMap.Add("Container", container);
 
             var trigger = TriggerBuilder.Create()
                 .WithIdentity("trigger1", "group1")
@@ -28,9 +33,30 @@
             await scheduler.ScheduleJob(job, trigger);
         }
 
-        public static void RegisterService(IWindsorContainer container)
+        /// <summary>
+        /// Get dll files and return list of IPlugin
+        /// </summary>
+        private void RegisterPlugins(IWindsorContainer container)
         {
-            
+            var files = Directory.GetFiles($"{new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName}\\dll");
+
+            var pluginType = typeof(IPlugin);
+
+            foreach (var file in files)
+            {
+                var assembly = Assembly.LoadFile(file);
+                var types = assembly.GetTypes();
+
+                foreach (var type in types.Where(x => !x.IsInterface && !x.IsAbstract))
+                {
+                    if (type.GetInterface(pluginType.FullName) != null)
+                    {
+                        var instance = (IPlugin)Activator.CreateInstance(type);
+
+                        container.Register(Component.For<IPlugin>().ImplementedBy(instance.GetType()).Named(instance.Name));
+                    }
+                }
+            }
         }
 
         /// <summary>

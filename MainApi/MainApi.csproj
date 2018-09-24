@@ -79,10 +79,6 @@
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="Entities\ApiContext.cs" />
-    <Compile Include="Entities\Country.cs" />
-    <Compile Include="Entities\Entity.cs" />
-    <Compile Include="Entities\Region.cs" />
-    <Compile Include="Enums\ContinentType.cs" />
     <Compile Include="Interfaces\IPlugin.cs" />
     <Compile Include="Interfaces\IService.cs" />
     <Compile Include="JobScheduler.cs" />

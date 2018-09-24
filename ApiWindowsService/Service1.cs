@@ -3,7 +3,6 @@
     using MainApi;
     using Newtonsoft.Json;
     using System;
-    using System.Data;
     using System.IO;
     using System.Linq;
     using System.ServiceProcess;
@@ -26,9 +25,9 @@
 
                 var data = main.GetAll().ToList();
 
-                var logPath = $"{path}\\api_{DateTime.Now.ToString("dd.MM.yyyy hh.mm.ss")}.txt";
+                var logPath = $"{path}\\api.txt";
 
-                using (var sw = File.CreateText(path))
+                using (var sw = new StreamWriter(logPath, true))
                 {
                     sw.WriteLine($"Start date: {DateTime.Now}");
 
@@ -41,9 +40,9 @@
             }
             catch(Exception e)
             {
-                var errorPath = $"{path}\\api_error_{DateTime.Now.ToString("dd.MM.yyyy hh.mm.ss")}.txt";
+                var logErrPath = $"{path}\\api_error.txt";
 
-                using (var sw = File.CreateText(errorPath))
+                using (var sw = new StreamWriter(logErrPath, true))
                 {
                     sw.WriteLine(e.StackTrace);
                     sw.WriteLine(e.Message);

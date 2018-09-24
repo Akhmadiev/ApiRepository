@@ -74,6 +74,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ApiAdditional\ApiAdditional.csproj">
+      <Project>{626E6A98-A594-43D8-9310-88DF24C70316}</Project>
+      <Name>ApiAdditional</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MainApi\MainApi.csproj">
       <Project>{2fb1fb66-feb7-4bea-b262-c190a0400b84}</Project>
       <Name>MainApi</Name>

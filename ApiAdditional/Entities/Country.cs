@@ -1,6 +1,5 @@
-﻿namespace MainApi
+﻿namespace ApiAdditional
 {
-    using MainApi.Enums;
     using System;
 
     /// <summary>
@@ -26,16 +25,6 @@
         /// <summary>
         /// Start data
         /// </summary>
-        public DateTime StartDate
-        {
-            get
-            {
-                return DateTime.Now;
-            }
-            set
-            {
-                StartDate = value;
-            }
-        }
+        public DateTime StartDate { get; set; }
     }
 }

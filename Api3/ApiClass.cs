@@ -1,18 +1,17 @@
-﻿namespace Api1
+﻿namespace Api3
 {
     using ApiAdditional;
     using System;
     using System.Collections.Generic;
-    using System.Threading;
     using System.Threading.Tasks;
 
     public class ApiClass : IPlugin
     {
-        public string Name => "Api1";
+        public string Name => "Api3";
 
         public async Task<List<ApiAdditional.Country>> Do()
         {
-            var data = await ApiAdditionalClass.GetData<Country>("https://api.myjson.com/bins/1ahk3g");
+            var data = await ApiAdditionalClass.GetData<Country>("https://api.myjson.com/bins/pta44");
 
             var result = new List<ApiAdditional.Country>(data.Count);
 
@@ -20,9 +19,9 @@
             {
                 result.Add(new ApiAdditional.Country
                 {
-                    CapitalCity = row.CapitalCity,
+                    CapitalCity = row.CapitalName,
                     ContinentType = (ContinentType)row.ContinentType,
-                    Name = row.Name,
+                    Name = row.CountryName,
                     StartDate = DateTime.Now
                 });
             }

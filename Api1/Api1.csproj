@@ -43,8 +43,6 @@
   <ItemGroup>
     <Compile Include="ApiClass.cs" />
     <Compile Include="Dtos\Country.cs" />
-    <Compile Include="Dtos\Region.cs" />
-    <Compile Include="IPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

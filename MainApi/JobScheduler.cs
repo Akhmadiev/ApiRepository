@@ -1,21 +1,37 @@
 ﻿namespace MainApi
 {
     using ApiAdditional;
+    using Castle.Windsor;
     using Quartz;
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Reflection;
     using System.Threading.Tasks;
 
     public class JobScheduler : IJob
     {
+        private IWindsorContainer container;
+
+        private string logPath;
+
         public Task Execute(IJobExecutionContext context)
         {
-            var plugins = GetPlugins();
+            logPath = $"{new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName}\\logs\\api_error.txt";
+            container = context.JobDetail.JobDataMap.Get("Container") as IWindsorContainer;
 
-            var countries = GetCountries(plugins);
+            if (container == null)
+            {
+                using (var sw = new StreamWriter(logPath, true))
+                {
+                    sw.WriteLine(DateTime.Now.ToString());
+                    sw.WriteLine("Can't find IWindsorContainer");
+                }
+
+                return null;
+            }
+
+            var countries = GetCountries();
 
             SaveData(countries);
 
@@ -45,9 +61,9 @@
         /// <summary>
         /// Get data from api
         /// </summary>
-        private List<Country> GetCountries(List<IPlugin> plugins)
+        private List<Country> GetCountries()
         {
-            var logPath = $"{new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName}\\logs";
+            var plugins = container.ResolveAll<IPlugin>();
 
             var objlockAdd = new object();
             var objlockExc = new object();
@@ -58,7 +74,7 @@
             {
                 try
                 {
-                    var task = x.Do<Country>();
+                    var task = x.Do();
                     task.Wait();
 
                     lock (objlockAdd)
@@ -70,47 +86,16 @@
                 {
                     lock (objlockExc)
                     {
-                        var path = $"{logPath}\\api_error_{DateTime.Now.ToString("dd.MM.yyyy hh.mm.ss")}.txt";
-
-                        using (var sw = File.CreateText(path))
+                        using (var sw = new StreamWriter(logPath, true))
                         {
-                            sw.WriteLine(e.StackTrace);
+                            sw.WriteLine(DateTime.Now.ToString());
+                            sw.WriteLine(e.ToString());
                         }
                     }
                 }
             });
 
             return countries;
-        }
-
-        /// <summary>
-        /// Get dll files and return list of IPlugin
-        /// </summary>
-        private List<IPlugin> GetPlugins()
-        {
-            var files = Directory.GetFiles($"{new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName}\\dll");
-
-            var pluginType = typeof(IPlugin);
-
-            var plugins = new List<IPlugin>();
-
-            foreach (var file in files)
-            {
-                var assembly = Assembly.LoadFile(file);
-                var types = assembly.GetTypes();
-
-                foreach (var type in types.Where(x => !x.IsInterface && !x.IsAbstract))
-                {
-                    if (type.GetInterface(pluginType.FullName) != null)
-                    {
-                        var instance = (IPlugin)Activator.CreateInstance(type);
-
-                        plugins.Add(instance);
-                    }
-                }
-            }
-
-            return plugins;
         }
     }
 }

@@ -1,18 +1,17 @@
-﻿namespace Api1
+﻿namespace Api2
 {
     using ApiAdditional;
     using System;
     using System.Collections.Generic;
-    using System.Threading;
     using System.Threading.Tasks;
 
     public class ApiClass : IPlugin
     {
-        public string Name => "Api1";
+        public string Name => "Api2";
 
         public async Task<List<ApiAdditional.Country>> Do()
         {
-            var data = await ApiAdditionalClass.GetData<Country>("https://api.myjson.com/bins/1ahk3g");
+            var data = await ApiAdditionalClass.GetData<Country>("https://api.myjson.com/bins/1ambe4");
 
             var result = new List<ApiAdditional.Country>(data.Count);
 

@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiWindowsService", "ApiWin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiAdditional", "ApiAdditional\ApiAdditional.csproj", "{626E6A98-A594-43D8-9310-88DF24C70316}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api3", "Api3\Api3.csproj", "{02AD4BFF-67A9-45FE-9303-4986F1D1C312}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{626E6A98-A594-43D8-9310-88DF24C70316}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{626E6A98-A594-43D8-9310-88DF24C70316}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{626E6A98-A594-43D8-9310-88DF24C70316}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02AD4BFF-67A9-45FE-9303-4986F1D1C312}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02AD4BFF-67A9-45FE-9303-4986F1D1C312}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02AD4BFF-67A9-45FE-9303-4986F1D1C312}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02AD4BFF-67A9-45FE-9303-4986F1D1C312}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,6 +66,7 @@ Global
 		{6CE3E9E8-B55D-44FE-8688-ABB3E9D58E40} = {BAA5FB48-1D28-440E-AA8E-24CD55B50D99}
 		{F851685F-7057-4414-850A-ACFEDDB25832} = {BAA5FB48-1D28-440E-AA8E-24CD55B50D99}
 		{626E6A98-A594-43D8-9310-88DF24C70316} = {78B20DD0-A72D-410B-80D4-B517F4657B6D}
+		{02AD4BFF-67A9-45FE-9303-4986F1D1C312} = {78B20DD0-A72D-410B-80D4-B517F4657B6D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {25966EB8-2CAF-49E8-A43C-CC23BA7626D4}
