@@ -13,7 +13,7 @@
         public static async Task<List<T>> GetData<T>(string address) where T : class
         {
             var client = new HttpClient();
-            HttpResponseMessage response = await client.GetAsync(address);
+            var response = await client.GetAsync(address);
 
             var data = await response.Content.ReadAsStringAsync();
 

@@ -94,7 +94,7 @@
     <Compile Include="Reports\MaxReport.cs" />
     <Compile Include="Reports\ReportIds.cs" />
     <Compile Include="Repository.cs" />
-    <Compile Include="Services\Report.cs" />
+    <Compile Include="Reports\Report.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

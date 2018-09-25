@@ -1,6 +1,7 @@
-﻿namespace MainApi.Services
+﻿namespace MainApi.Reports
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -14,13 +15,13 @@
 
         public IGenerateReport[] GenerateReports { get; set; }
 
-        private static AutoResetEvent _autoResetEvent;
+        private static Queue<string> _reportIdsQueue;
 
         private static Entities.Report _reportEntity;
 
         public async void Start()
         {
-            _autoResetEvent = new AutoResetEvent(false);
+            _reportIdsQueue = new Queue<string>();
 
             var scheduler = await StdSchedulerFactory.GetDefaultScheduler();
             await scheduler.Start();
@@ -50,7 +51,7 @@
 
             _reportEntity = report;
 
-            _autoResetEvent.Set();
+            _reportIdsQueue.Enqueue(_reportEntity.ReportId);
 
             return _reportEntity.Id;
         }
@@ -84,9 +85,14 @@
 
             public Task Execute(IJobExecutionContext context)
             {
-                _autoResetEvent.WaitOne();
+                if (!_reportIdsQueue.Any())
+                {
+                    return null;
+                }
 
-                    _reportEntity.ReportStatus = Enums.ReportStatus.Started;
+                _reportIdsQueue.Dequeue();
+
+                _reportEntity.ReportStatus = Enums.ReportStatus.Started;
                 Repository.Update(_reportEntity);
 
                 var generateReport = GenerateReports
