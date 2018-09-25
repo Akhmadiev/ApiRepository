@@ -79,7 +79,11 @@
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="Entities\ApiContext.cs" />
-    <Compile Include="Interfaces\IGenerate.cs" />
+    <Compile Include="Entities\MaxReport.cs" />
+    <Compile Include="Entities\Product.cs" />
+    <Compile Include="Entities\Report.cs" />
+    <Compile Include="Enums\ReportStatus.cs" />
+    <Compile Include="Interfaces\IGenerateReport.cs" />
     <Compile Include="Interfaces\ILogger.cs" />
     <Compile Include="Interfaces\IPlugin.cs" />
     <Compile Include="Interfaces\IRepository.cs" />
@@ -87,7 +91,11 @@
     <Compile Include="JobScheduler.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reports\BaseReport.cs" />
+    <Compile Include="Reports\MaxReport.cs" />
+    <Compile Include="Reports\ReportIds.cs" />
     <Compile Include="Repository.cs" />
+    <Compile Include="Services\Report.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

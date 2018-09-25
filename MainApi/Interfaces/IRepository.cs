@@ -8,10 +8,14 @@
 
     public interface IRepository
     {
+        ApiContext ApiContext { get; }
+
         void Save<T>(T entity) where T : Entity;
 
         void Save<T>(IEnumerable<T> entities) where T : Entity;
 
-        IEnumerable<Country> GetAll(Expression<Func<Country, bool>> predicate = null);
+        void Update<T>(T entity) where T : Entity;
+
+        IQueryable<T> GetAll<T>() where T : Entity;
     }
 }

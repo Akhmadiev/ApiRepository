@@ -9,37 +9,33 @@
 
     public class Repository : IRepository
     {
-        public IEnumerable<Country> GetAll(Expression<Func<Country, bool>> predicate = null)
+        public ApiContext ApiContext { get => new ApiContext(); }
+
+        public IQueryable<T> GetAll<T>() where T : Entity
         {
-            using (var context = new ApiContext())
-            {
-                return context.Countries
-                    .Where(predicate)
-                    .ToList();
-            }
+            return ApiContext.Set<T>();
         }
 
         public void Save<T>(IEnumerable<T> entities) where T : Entity
         {
-            using (var context = new ApiContext())
+            foreach (var entity in entities)
             {
-                foreach (var entity in entities)
-                {
-                    context.Set<T>().Add(entity);
-
-                    context.SaveChanges();
-                }
+                ApiContext.Set<T>().Add(entity);
             }
+
+            ApiContext.SaveChanges();
         }
 
         public void Save<T>(T entity) where T : Entity
         {
-            using (var context = new ApiContext())
-            {
-                context.Set<T>().Add(entity);
+            ApiContext.Set<T>().Add(entity);
 
-                context.SaveChanges();
-            }
+            ApiContext.SaveChanges();
+        }
+
+        public void Update<T>(T entity) where T : Entity
+        {
+            ApiContext.SaveChanges();
         }
     }
 }
