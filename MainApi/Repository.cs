@@ -18,24 +18,56 @@
 
         public void Save<T>(IEnumerable<T> entities) where T : Entity
         {
-            foreach (var entity in entities)
+            using (var context = new ApiContext())
             {
-                ApiContext.Set<T>().Add(entity);
-            }
+                foreach (var entity in entities)
+                {
+                    context.Set<T>().Add(entity);
+                }
 
-            ApiContext.SaveChanges();
+                context.SaveChanges();
+            }
         }
 
         public void Save<T>(T entity) where T : Entity
         {
-            ApiContext.Set<T>().Add(entity);
-
-            ApiContext.SaveChanges();
+            using (var context = new ApiContext())
+            {
+                context.Set<T>().Add(entity);
+                context.SaveChanges();
+            }
         }
 
         public void Update<T>(T entity) where T : Entity
         {
-            ApiContext.SaveChanges();
+            using (var context = new ApiContext())
+            {
+                var updateEntity = context.Set<T>().Where(x => x.Id == entity.Id).First();
+
+                var outProperties = updateEntity.GetType().GetProperties();
+
+                var inProperties = entity.GetType().GetProperties();
+
+                foreach (var outProperty in outProperties)
+                {
+                    var inProperty = inProperties.First(x => x.Name == outProperty.Name);
+
+                    var outValue = outProperty.GetValue(updateEntity).ToString();
+                    var inValue = inProperty.GetValue(entity).ToString();
+
+                    if (outValue != inValue)
+                    {
+                        outProperty.SetValue(updateEntity, inProperty.GetValue(entity));
+                    }
+                }
+
+                context.SaveChanges();
+            }
+        }
+
+        public T Get<T>(int id) where T : Entity
+        {
+            return ApiContext.Set<T>().Where(x => x.Id == id).FirstOrDefault();
         }
     }
 }

@@ -36,7 +36,7 @@
         /// </summary>
         private void SaveData(List<Country> countries)
         {
-            var currentCountries = Repository.GetAll().Select(x => x.Name);
+            var currentCountries = Repository.GetAll<Country>().Select(x => x.Name);
 
             countries = countries.Distinct().Where(x => !currentCountries.Contains(x.Name)).ToList();
 

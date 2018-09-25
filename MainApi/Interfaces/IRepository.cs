@@ -17,5 +17,7 @@
         void Update<T>(T entity) where T : Entity;
 
         IQueryable<T> GetAll<T>() where T : Entity;
+
+        T Get<T>(int id) where T : Entity;
     }
 }

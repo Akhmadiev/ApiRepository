@@ -2,13 +2,18 @@
 {
     using MainApi.Entities;
     using MainApi.Interfaces;
+    using System;
     using System.Linq;
 
-    public class MaxReport : BaseReport, IGenerateReport
+    public class MaxReport : IGenerateReport
     {
         public string ReportId => ReportIds.Max;
 
-        public void Execute()
+        public IRepository Repository { get; set; }
+
+        public Action<string> Action { get; set; }
+
+        public void Generate(Report report)
         {
             var summary = Repository.GetAll<Product>()
                 .GroupBy(x => 1)
@@ -20,22 +25,28 @@
                 })
                 .First();
 
-            var report = Repository.GetAll<Report>()
-                .OrderBy(x => x.StartDate)
-                .First();
-
             var entity = new Entities.MaxReport
             {
                 Max = summary.Max,
                 Min = summary.Min,
                 Avg = summary.Avg,
-                Report = report
+                Report = report.Id
             };
-
             Repository.Save(entity);
+        }
 
-            report.ReportStatus = Enums.ReportStatus.Finished;
-            Repository.Update(entity);
+        public string GetReport(Report report)
+        {
+            var maxReport = Repository.GetAll<Entities.MaxReport>()
+                .Where(x => x.Report == report.Id)
+                .FirstOrDefault();
+
+            if (maxReport == null)
+            {
+                return "Report not found. Please create a new one";
+            }
+
+            return $"Max: {maxReport.Max}\nMin: {maxReport.Min}\nAvg: {maxReport.Avg}";
         }
     }
 }

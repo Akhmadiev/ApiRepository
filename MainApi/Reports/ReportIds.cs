@@ -5,6 +5,6 @@
         /// <summary>
         /// Get max values
         /// </summary>
-        public static readonly string Max = "Max";
+        public static readonly string Max = "1 - MaxReport";
     }
 }

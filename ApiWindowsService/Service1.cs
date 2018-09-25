@@ -18,7 +18,7 @@
         protected override void OnStart(string[] args)
         {
             var main = new MainApiClass();
-            main.Start();
+            //main.Start();
         }
 
         protected override void OnStop()

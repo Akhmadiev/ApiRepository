@@ -2,7 +2,6 @@
 {
     using Quartz;
     using Quartz.Impl;
-    using System.Collections.Generic;
     using System.Linq;
     using Castle.Windsor;
     using System;
@@ -14,33 +13,37 @@
 
     public class MainApiClass
     {
-        public async void Start()
+        public void Start(IWindsorContainer container)
         {
-            var container = new WindsorContainer();
             RegisterPlugins(container);
-
-            var scheduler = await StdSchedulerFactory.GetDefaultScheduler();
-
-            await scheduler.Start();
-
-            var job = JobBuilder.Create<JobScheduler>().Build();
-
-            job.JobDataMap.Add("Plugins", container.ResolveAll<IPlugin>());
-            job.JobDataMap.Add("Repository", container.Resolve<IRepository>("Repository"));
-            job.JobDataMap.Add("Logger", container.Resolve<ILogger>("Logger"));
-
-            var trigger = TriggerBuilder.Create()
-                .WithIdentity("trigger1", "group1")
-                .StartNow()
-                .WithSimpleSchedule(x => x.WithIntervalInMinutes(1).RepeatForever())
-                .Build();
-
-            await scheduler.ScheduleJob(job, trigger);
+            RegisterReports(container);
         }
 
-        /// <summary>
-        /// Get dll files and return list of IPlugin
-        /// </summary>
+        //public async void Start2()
+        //{
+        //    var container = new WindsorContainer();
+        //    RegisterPlugins(container);
+        //    RegisterReports(container);
+
+        //    var scheduler = await StdSchedulerFactory.GetDefaultScheduler();
+
+        //    await scheduler.Start();
+
+        //    var job = JobBuilder.Create<JobScheduler>().Build();
+
+        //    job.JobDataMap.Add("Plugins", container.ResolveAll<IPlugin>());
+        //    job.JobDataMap.Add("Repository", container.Resolve<IRepository>("Repository"));
+        //    job.JobDataMap.Add("Logger", container.Resolve<ILogger>("Logger"));
+
+        //    var trigger = TriggerBuilder.Create()
+        //        .WithIdentity("trigger1", "group1")
+        //        .StartNow()
+        //        .WithSimpleSchedule(x => x.WithIntervalInMinutes(1).RepeatForever())
+        //        .Build();
+
+        //    await scheduler.ScheduleJob(job, trigger);
+        //}
+
         private void RegisterPlugins(IWindsorContainer container)
         {
             var files = Directory.GetFiles($"{new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName}\\dll");
@@ -65,29 +68,22 @@
             container.Register(Component.For<IRepository>().ImplementedBy<Repository>());
         }
 
-        /// <summary>
-        /// Get all countries
-        /// </summary>
-        public IQueryable<Country> GetAll()
+        private void RegisterReports(IWindsorContainer container)
         {
-            var countries = new List<Country>();
+            var assembly = Assembly.GetExecutingAssembly();
+            
+            var types = assembly.GetTypes();
 
-            var context = new ApiContext();
+            var reportType = typeof(IGenerateReport);
 
-            return context.Countries;
-        }
-
-        /// <summary>
-        /// Get all countries by date
-        /// </summary>
-        public IQueryable<Country> GetAll(DateTime dateTime)
-        {
-            var countries = new List<Country>();
-
-            var context = new ApiContext();
-
-            return context.Countries
-                .Where(x => x.StartDate.Date == dateTime.Date);
+            foreach (var type in types)
+            {
+                if (type.GetInterface(reportType.FullName) != null)
+                {
+                    var instance = (IGenerateReport)Activator.CreateInstance(type);
+                    container.Register(Component.For<IGenerateReport>().Instance(instance).Named(instance.ReportId));
+                }
+            }
         }
     }
 }

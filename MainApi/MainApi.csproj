@@ -91,7 +91,6 @@
     <Compile Include="JobScheduler.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Reports\BaseReport.cs" />
     <Compile Include="Reports\MaxReport.cs" />
     <Compile Include="Reports\ReportIds.cs" />
     <Compile Include="Repository.cs" />
@@ -121,14 +120,13 @@
       <Name>ApiAdditional</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <Content Include="App_Data\DbConnection1.mdf">
+    <Content Include="App_Data\DbConnection4.mdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="App_Data\DbConnection1_log.ldf">
+    <Content Include="App_Data\DbConnection4_log.ldf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <DependentUpon>DbConnection1.mdf</DependentUpon>
+      <DependentUpon>DbConnection4.mdf</DependentUpon>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

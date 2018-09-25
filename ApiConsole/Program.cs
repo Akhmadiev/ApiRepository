@@ -1,7 +1,12 @@
 ﻿namespace ApiConsole
 {
     using ApiAdditional;
+    using Castle.Windsor;
     using MainApi;
+    using MainApi.Entities;
+    using MainApi.Interfaces;
+    using MainApi.Reports;
+    using MainApi.Services;
     using Newtonsoft.Json;
     using System;
     using System.Linq;
@@ -11,22 +16,50 @@
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Generate report - 1");
-            Console.WriteLine("Get report - 2");
-            var input = Console.ReadLine();
-
-            if (input == "1")
-            {
-                
-            }
-            else if (input == "2")
-            {
-                Console.WriteLine("Write ID:");
-                var id = Convert.ToInt32(Console.ReadLine());
-            }
+            var container = new WindsorContainer();
 
             var main = new MainApiClass();
-            main.Start();
+            main.Start(container);
+
+            var report = new MainApi.Services.Report { Repository = container.Resolve<IRepository>(), GenerateReports = container.ResolveAll<IGenerateReport>() };
+            report.Start();
+            
+            while(true)
+            {
+                Console.WriteLine("Generate report - 1");
+                Console.WriteLine("Get report - 2");
+                var input = Console.ReadLine();
+
+                if (input == "1")
+                {
+                    Console.WriteLine("Choose report:");
+                    var names = typeof(ReportIds).GetFields().Select(x => (string)x.GetValue(null)).ToList();
+                    foreach (var name in names)
+                    {
+                        Console.WriteLine(name);
+                    }
+
+                    input = Console.ReadLine();
+
+                    var reportId = names.First(x => x.Contains(input));
+                    var id = report.Generate(reportId);
+
+                    Console.WriteLine($"Your ID: '{id}'. The report will be ready in 10 minutes");
+                }
+                else if (input == "2")
+                {
+                    Console.WriteLine("Write ID:");
+                    var id = Convert.ToInt32(Console.ReadLine());
+
+                    var result = report.GetReport(id);
+
+                    Console.WriteLine();
+                    Console.WriteLine(result);
+                }
+
+                Console.WriteLine();
+                Console.WriteLine();
+            }
         }
     }
 }
