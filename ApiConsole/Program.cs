@@ -1,6 +1,7 @@
 ﻿namespace ApiConsole
 {
     using ApiAdditional;
+    using Castle.MicroKernel.Resolvers.SpecializedResolvers;
     using Castle.Windsor;
     using MainApi;
     using MainApi.Entities;
@@ -18,11 +19,12 @@
         static void Main(string[] args)
         {
             var container = new WindsorContainer();
+            container.Kernel.Resolver.AddSubResolver(new CollectionResolver(container.Kernel));
 
             var main = new MainApiClass();
             main.Start(container);
 
-            var report = new MainApi.Reports.Report { Repository = container.Resolve<IRepository>(), GenerateReports = container.ResolveAll<IGenerateReport>() };
+            var report = container.Resolve<MainApi.Reports.Report>();
             report.Start();
 
             while (true)

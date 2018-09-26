@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Castle.Windsor;
     using MainApi.Interfaces;
 
     public class Report
@@ -59,7 +60,6 @@
                     var generateReport = generateReports
                         .First(x => x.ReportId == report.ReportId);
 
-                    generateReport.Repository = repository;
                     generateReport.Generate(report);
 
                     report.ReportStatus = Enums.ReportStatus.Finished;
@@ -85,7 +85,6 @@
             var generateReport = GenerateReports
                 .First(x => x.ReportId == report.ReportId);
 
-            generateReport.Repository = Repository;
             return generateReport.GetReport(report);
         }
     }

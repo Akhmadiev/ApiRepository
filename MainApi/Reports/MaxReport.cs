@@ -2,7 +2,6 @@
 {
     using MainApi.Entities;
     using MainApi.Interfaces;
-    using System;
     using System.Linq;
 
     public class MaxReport : IGenerateReport
@@ -10,8 +9,6 @@
         public string ReportId => ReportIds.Max;
 
         public IRepository Repository { get; set; }
-
-        public Action<string> Action { get; set; }
 
         public void Generate(Entities.Report report)
         {
