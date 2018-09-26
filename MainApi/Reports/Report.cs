@@ -15,13 +15,11 @@
 
         public IGenerateReport[] GenerateReports { get; set; }
 
-        private static Queue<string> _reportIdsQueue;
-
-        private static Entities.Report _reportEntity;
+        private static Queue<Entities.Report> _reportQueue;
 
         public async void Start()
         {
-            _reportIdsQueue = new Queue<string>();
+            _reportQueue = new Queue<Entities.Report>();
 
             var scheduler = await StdSchedulerFactory.GetDefaultScheduler();
             await scheduler.Start();
@@ -33,7 +31,7 @@
             var trigger = TriggerBuilder.Create()
                 .WithIdentity("trigger1", "group1")
                 .StartNow()
-                .WithSimpleSchedule(x => x.WithIntervalInMinutes(10).RepeatForever())
+                .WithSimpleSchedule(x => x.WithIntervalInMinutes(2).RepeatForever())
                 .Build();
 
             await scheduler.ScheduleJob(job, trigger);
@@ -49,11 +47,9 @@
             };
             Repository.Save(report);
 
-            _reportEntity = report;
+            _reportQueue.Enqueue(report);
 
-            _reportIdsQueue.Enqueue(_reportEntity.ReportId);
-
-            return _reportEntity.Id;
+            return report.Id;
         }
 
         public string GetReport(int id)
@@ -85,24 +81,21 @@
 
             public Task Execute(IJobExecutionContext context)
             {
-                if (!_reportIdsQueue.Any())
-                {
-                    return null;
-                }
+                while (!_reportQueue.Any()) { }
 
-                _reportIdsQueue.Dequeue();
+                var report = _reportQueue.Dequeue();
 
-                _reportEntity.ReportStatus = Enums.ReportStatus.Started;
-                Repository.Update(_reportEntity);
+                report.ReportStatus = Enums.ReportStatus.Started;
+                Repository.Update(report);
 
                 var generateReport = GenerateReports
-                    .First(x => x.ReportId == _reportEntity.ReportId);
+                    .First(x => x.ReportId == report.ReportId);
 
                 generateReport.Repository = Repository;
-                generateReport.Generate(_reportEntity);
+                generateReport.Generate(report);
 
-                _reportEntity.ReportStatus = Enums.ReportStatus.Finished;
-                Repository.Update(_reportEntity);
+                report.ReportStatus = Enums.ReportStatus.Finished;
+                Repository.Update(report);
 
                 return null;
             }

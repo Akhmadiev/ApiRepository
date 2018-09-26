@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            this.ServiceName = "ApiRepoWindowService3";
+            this.ServiceName = "ApiRepoWindowService12";
         }
 
         #endregion

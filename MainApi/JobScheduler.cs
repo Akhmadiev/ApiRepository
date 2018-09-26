@@ -18,12 +18,8 @@
 
         public ILogger Logger { get; set; }
 
-        private string logPath;
-
         public Task Execute(IJobExecutionContext context)
         {
-            logPath = $"{new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName}\\logs\\api_error.txt";
-
             var countries = GetCountries();
 
             SaveData(countries);

@@ -17,32 +17,8 @@
         {
             RegisterPlugins(container);
             RegisterReports(container);
+            RegisterOthers(container);
         }
-
-        //public async void Start2()
-        //{
-        //    var container = new WindsorContainer();
-        //    RegisterPlugins(container);
-        //    RegisterReports(container);
-
-        //    var scheduler = await StdSchedulerFactory.GetDefaultScheduler();
-
-        //    await scheduler.Start();
-
-        //    var job = JobBuilder.Create<JobScheduler>().Build();
-
-        //    job.JobDataMap.Add("Plugins", container.ResolveAll<IPlugin>());
-        //    job.JobDataMap.Add("Repository", container.Resolve<IRepository>("Repository"));
-        //    job.JobDataMap.Add("Logger", container.Resolve<ILogger>("Logger"));
-
-        //    var trigger = TriggerBuilder.Create()
-        //        .WithIdentity("trigger1", "group1")
-        //        .StartNow()
-        //        .WithSimpleSchedule(x => x.WithIntervalInMinutes(1).RepeatForever())
-        //        .Build();
-
-        //    await scheduler.ScheduleJob(job, trigger);
-        //}
 
         private void RegisterPlugins(IWindsorContainer container)
         {
@@ -64,8 +40,12 @@
                     }
                 }
             }
+        }
 
+        private void RegisterOthers(IWindsorContainer container)
+        {
             container.Register(Component.For<IRepository>().ImplementedBy<Repository>());
+            container.Register(Component.For<ILogger>().ImplementedBy<Logger>());
         }
 
         private void RegisterReports(IWindsorContainer container)

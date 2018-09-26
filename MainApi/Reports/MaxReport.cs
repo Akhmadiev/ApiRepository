@@ -13,7 +13,7 @@
 
         public Action<string> Action { get; set; }
 
-        public void Generate(Report report)
+        public void Generate(Entities.Report report)
         {
             var summary = Repository.GetAll<Product>()
                 .GroupBy(x => 1)
@@ -35,7 +35,7 @@
             Repository.Save(entity);
         }
 
-        public string GetReport(Report report)
+        public string GetReport(Entities.Report report)
         {
             var maxReport = Repository.GetAll<Entities.MaxReport>()
                 .Where(x => x.Report == report.Id)

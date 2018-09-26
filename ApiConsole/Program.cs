@@ -6,8 +6,9 @@
     using MainApi.Entities;
     using MainApi.Interfaces;
     using MainApi.Reports;
-    using MainApi.Services;
     using Newtonsoft.Json;
+    using Quartz;
+    using Quartz.Impl;
     using System;
     using System.Linq;
     using System.Threading;
@@ -21,10 +22,10 @@
             var main = new MainApiClass();
             main.Start(container);
 
-            var report = new MainApi.Services.Report { Repository = container.Resolve<IRepository>(), GenerateReports = container.ResolveAll<IGenerateReport>() };
+            var report = new MainApi.Reports.Report { Repository = container.Resolve<IRepository>(), GenerateReports = container.ResolveAll<IGenerateReport>() };
             report.Start();
-            
-            while(true)
+
+            while (true)
             {
                 Console.WriteLine("Generate report - 1");
                 Console.WriteLine("Get report - 2");
@@ -44,7 +45,7 @@
                     var reportId = names.First(x => x.Contains(input));
                     var id = report.Generate(reportId);
 
-                    Console.WriteLine($"Your ID: '{id}'. The report will be ready in 10 minutes");
+                    Console.WriteLine($"Your ID: '{id}'. The report will be ready in 2 minutes");
                 }
                 else if (input == "2")
                 {

@@ -17,7 +17,7 @@
 
             processInstaller.Account = ServiceAccount.LocalSystem;
             serviceInstaller.StartType = ServiceStartMode.Manual;
-            serviceInstaller.ServiceName = "ApiRepoWindowService3";
+            serviceInstaller.ServiceName = "ApiRepoWindowService12";
             Installers.Add(processInstaller);
             Installers.Add(serviceInstaller);
         }
