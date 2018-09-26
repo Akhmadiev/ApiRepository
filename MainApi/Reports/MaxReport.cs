@@ -26,16 +26,18 @@
             {
                 Max = summary.Max,
                 Min = summary.Min,
-                Avg = summary.Avg,
-                Report = report.Id
+                Avg = summary.Avg
             };
             Repository.Save(entity);
+
+            entity.Report = report;
+            Repository.Update(entity);
         }
 
         public string GetReport(Entities.Report report)
         {
             var maxReport = Repository.GetAll<Entities.MaxReport>()
-                .Where(x => x.Report == report.Id)
+                .Where(x => x.Report.Id == report.Id)
                 .FirstOrDefault();
 
             if (maxReport == null)

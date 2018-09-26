@@ -7,7 +7,7 @@
         /// <summary>
         /// Report
         /// </summary>
-        public int Report { get; set; }
+        public Report Report { get; set; }
 
         /// <summary>
         /// Max

@@ -6,7 +6,7 @@
 
     public class ApiContext : DbContext
     {
-        public ApiContext() : base("DbConnection4") { }
+        public ApiContext() : base("DbConnection6") { }
 
         public virtual DbSet<Country> Countries { get; set; }
 

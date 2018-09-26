@@ -22,6 +22,7 @@
             {
                 foreach (var entity in entities)
                 {
+                    entity.Id = Guid.NewGuid();
                     context.Set<T>().Add(entity);
                 }
 
@@ -33,6 +34,8 @@
         {
             using (var context = new ApiContext())
             {
+                entity.Id = Guid.NewGuid();
+
                 context.Set<T>().Add(entity);
                 context.SaveChanges();
             }
@@ -52,8 +55,8 @@
                 {
                     var inProperty = inProperties.First(x => x.Name == outProperty.Name);
 
-                    var outValue = outProperty.GetValue(updateEntity).ToString();
-                    var inValue = inProperty.GetValue(entity).ToString();
+                    var outValue = outProperty.GetValue(updateEntity)?.ToString();
+                    var inValue = inProperty.GetValue(entity)?.ToString();
 
                     if (outValue != inValue)
                     {
@@ -65,7 +68,7 @@
             }
         }
 
-        public T Get<T>(int id) where T : Entity
+        public T Get<T>(Guid id) where T : Entity
         {
             return ApiContext.Set<T>().Where(x => x.Id == id).FirstOrDefault();
         }

@@ -1,5 +1,7 @@
 ﻿namespace ApiAdditional
 {
+    using System;
+
     /// <summary>
     /// Base class for entities
     /// </summary>
@@ -8,6 +10,6 @@
         /// <summary>
         /// Id
         /// </summary>
-        public int Id { get; set; }
+        public Guid Id { get; set; }
     }
 }

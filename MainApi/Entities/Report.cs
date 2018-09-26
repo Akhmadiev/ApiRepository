@@ -14,7 +14,12 @@
         /// <summary>
         /// ReportId
         /// </summary>
-        public string ReportId { get; set; }
+        public int ReportId { get; set; }
+
+        /// <summary>
+        /// TemplateId
+        /// </summary>
+        public string TemplateId { get; set; }
 
         /// <summary>
         /// StartDate

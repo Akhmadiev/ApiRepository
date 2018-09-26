@@ -18,6 +18,6 @@
 
         IQueryable<T> GetAll<T>() where T : Entity;
 
-        T Get<T>(int id) where T : Entity;
+        T Get<T>(Guid id) where T : Entity;
     }
 }
