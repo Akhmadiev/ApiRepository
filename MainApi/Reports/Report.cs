@@ -6,8 +6,6 @@
     using System.Threading;
     using System.Threading.Tasks;
     using MainApi.Interfaces;
-    using Quartz;
-    using Quartz.Impl;
 
     public class Report
     {
@@ -17,24 +15,15 @@
 
         private static Queue<Entities.Report> _reportQueue;
 
-        public async void Start()
+        private static AutoResetEvent _evt;
+
+        public Report()
         {
             _reportQueue = new Queue<Entities.Report>();
+            _evt = new AutoResetEvent(false);
 
-            var scheduler = await StdSchedulerFactory.GetDefaultScheduler();
-            await scheduler.Start();
-
-            var job = JobBuilder.Create<ReportJobScheduler>().Build();
-            job.JobDataMap.Add("Repository", Repository);
-            job.JobDataMap.Add("GenerateReports", GenerateReports);
-
-            var trigger = TriggerBuilder.Create()
-                .WithIdentity("trigger1", "group1")
-                .StartNow()
-                .WithSimpleSchedule(x => x.WithIntervalInMinutes(2).RepeatForever())
-                .Build();
-
-            await scheduler.ScheduleJob(job, trigger);
+            var task = new Task(() => Generate(Repository, GenerateReports));
+            task.Start();
         }
 
         public int Generate(string reportId)
@@ -49,7 +38,34 @@
 
             _reportQueue.Enqueue(report);
 
+            _evt.Set();
+
             return report.Id;
+        }
+
+        private static void Generate(IRepository repository, IGenerateReport[] generateReports)
+        {
+            while (true)
+            {
+                _evt.WaitOne();
+
+                while (_reportQueue.Any())
+                {
+                    var report = _reportQueue.Dequeue();
+
+                    report.ReportStatus = Enums.ReportStatus.Started;
+                    repository.Update(report);
+
+                    var generateReport = generateReports
+                        .First(x => x.ReportId == report.ReportId);
+
+                    generateReport.Repository = repository;
+                    generateReport.Generate(report);
+
+                    report.ReportStatus = Enums.ReportStatus.Finished;
+                    repository.Update(report);
+                }
+            }
         }
 
         public string GetReport(int id)
@@ -71,34 +87,6 @@
 
             generateReport.Repository = Repository;
             return generateReport.GetReport(report);
-        }
-
-        public class ReportJobScheduler : IJob
-        {
-            public IRepository Repository { get; set; }
-
-            public IGenerateReport[] GenerateReports { get; set; }
-
-            public Task Execute(IJobExecutionContext context)
-            {
-                while (!_reportQueue.Any()) { }
-
-                var report = _reportQueue.Dequeue();
-
-                report.ReportStatus = Enums.ReportStatus.Started;
-                Repository.Update(report);
-
-                var generateReport = GenerateReports
-                    .First(x => x.ReportId == report.ReportId);
-
-                generateReport.Repository = Repository;
-                generateReport.Generate(report);
-
-                report.ReportStatus = Enums.ReportStatus.Finished;
-                Repository.Update(report);
-
-                return null;
-            }
         }
     }
 }
