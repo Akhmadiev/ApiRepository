@@ -23,6 +23,7 @@
             main.Start(container);
 
             var report = new MainApi.Reports.Report { Repository = container.Resolve<IRepository>(), GenerateReports = container.ResolveAll<IGenerateReport>() };
+            report.Start();
 
             while (true)
             {

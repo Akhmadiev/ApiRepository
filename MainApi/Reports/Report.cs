@@ -17,7 +17,7 @@
 
         private static AutoResetEvent _evt;
 
-        public Report()
+        public void Start()
         {
             _reportQueue = new Queue<Entities.Report>();
             _evt = new AutoResetEvent(false);
